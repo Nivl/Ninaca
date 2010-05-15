@@ -4,7 +4,7 @@
 **  \file	Factory.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	08/28/2009, 02:35 AM
-**  \last	Nivl <nivl@free.fr> 05/15/2010, 10:54 PM
+**  \last	Nivl <nivl@free.fr> 05/15/2010, 11:05 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  This program is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ abstract class Factory
   {
     if ( self::$__Instance === null ) {
       $type = self::getType();
-      $class_name = __NAMESPACE__."\\{$type}Yaml";
+      $class_name = __NAMESPACE__."\\{$type}";
       self::$__Instance = new $class_name();}
     return self::$__Instance;
   }

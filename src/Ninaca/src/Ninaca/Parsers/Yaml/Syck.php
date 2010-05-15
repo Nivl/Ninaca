@@ -4,7 +4,7 @@
 **  \file	Syck.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	08/28/2009, 11:32 PM
-**  \last	Nivl <nivl@free.fr> 05/15/2010, 11:06 PM
+**  \last	Nivl <nivl@free.fr> 05/15/2010, 11:27 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  This program is free software: you can redistribute it and/or modify
