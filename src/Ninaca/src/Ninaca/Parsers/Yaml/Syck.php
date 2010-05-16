@@ -1,24 +1,16 @@
 <?php
 
 /*!
-**  \file	Syck.php
+**  \file	SyckYaml.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	08/28/2009, 11:32 PM
-**  \last	Nivl <nivl@free.fr> 05/15/2010, 11:27 PM
+**  \last	Nivl <nivl@free.fr> 05/14/2010, 01:32 AM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
-**  This program is free software: you can redistribute it and/or modify
-**  it under the terms of the GNU General Public License as published by
-**  the Free Software Foundation, either version 3 of the License, or
-**  (at your option) any later version.
-**
-**  This program is distributed in the hope that it will be useful,
-**  but WITHOUT ANY WARRANTY; without even the implied warranty of
-**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**  GNU General Public License for more details.
-**
-**  You should have received a copy of the GNU General Public License
-**  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+**  Licensed under the MIT license:
+**  <http://www.opensource.org/licenses/mit-license.php>.
+**  For the full copyright and license information, please view the LICENSE
+**  file that was distributed with this source code.
 */
 
 
@@ -101,7 +93,10 @@ class Syck implements Yaml
 
     if (strpos($yaml, "\n") === false && is_file($yaml))
       return $this->loadFile($yaml);
-    return syck_load($yaml);
+    try {
+      return syck_load($yaml); }
+    catch (\SyckException $e) {
+    throw new ParserException($e->getMessage());}
   }
   
 
@@ -127,7 +122,10 @@ class Syck implements Yaml
     
     if (!is_file($file) || !is_readable($file))
       throw new FtpException("$file is not readable or doesn’t exists.");
-    return syck_load($file);
+    try {
+      return syck_load($file); }
+    catch (\SyckException $e) {
+    throw new ParserException($e->getMessage());}
   }
 }
 

@@ -4,21 +4,13 @@
 **  \file	Ftp.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	09/13/2009, 06:53 PM
-**  \last	Nivl <nivl@free.fr> 04/24/2010, 03:15 AM
+**  \last	Nivl <nivl@free.fr> 05/09/2010, 05:03 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
-**  This program is free software: you can redistribute it and/or modify
-**  it under the terms of the GNU General Public License as published by
-**  the Free Software Foundation, either version 3 of the License, or
-**  (at your option) any later version.
-**
-**  This program is distributed in the hope that it will be useful,
-**  but WITHOUT ANY WARRANTY; without even the implied warranty of
-**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**  GNU General Public License for more details.
-**
-**  You should have received a copy of the GNU General Public License
-**  along with this program. If not, see <http://www.gnu.org/licenses/>.
+**  Licensed under the MIT license:
+**  <http://www.opensource.org/licenses/mit-license.php>.
+**  For the full copyright and license information, please view the LICENSE
+**  file that was distributed with this source code.
 */
 
 
@@ -33,6 +25,79 @@ use \Ninaca\Exceptions\InvalidArgumentException;
 */
 class Ftp
 {
+  /*!
+  ** Gets the list of the files of one or several directories.
+  **
+  ** The two arguments takes by the closure cb_key are the filename and the
+  **   filepath.
+  **
+  ** The two arguments takes by the closure cb_values are the filepath and the
+  **  returns of cb_key.
+  **
+  ** \todo The wildcard * can’t be used for the exception list.
+  **
+  ** \param path
+  **          \c string|array - Director(y/ies) to browse.
+  ** \param list
+  **          \c &array - Variable which will contains the list.
+  ** \param [exts]
+  **          \c array - Allowed extensions.
+  ** \param [except]
+  **          \c array - File or directory to not browse.
+  ** \param [rec]
+  **          \c bool - Browse recursively?
+  ** \param [cb_key]
+  **          \c \Closure - Callback function for the filename.
+  ** \param [cb_value]
+  **          \c \Closure - Callback Function for the filepath.
+  ** \param [depth]
+  **          \c int - Depth for debugage informations.
+  ** \param [iae]
+  **          \c int - Depth for InvalidArgumentException.
+  **
+  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  **     if \a iae is not an int or less than 0.
+  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  **     if \a depth is not an int or less than 0.
+  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  **     if \a path is not a string or is empty.
+  */
+  static public function getFilesFromDir($path,
+					  array &$list,
+					  array $exts = array(),
+					  array $except = array(),
+					  $rec = true,
+					  \Closure $cb_key = null,
+					  \Closure $cb_value = null
+					  $depth = 0,
+					  $iae = 0)
+  {
+    Debug::checkArgs(0,
+		     8, 'int', $depth,
+		     8, array('greater than', -1), $depth,
+		     9, 'int', $iae,
+		     9, array('greater than', -1), $iae);
+    Debug::checkArgs($aie,
+		     1, 'string or array', $path,
+		     1, 'nonempty', $path);
+    
+    $dirs = (array)$path;
+    
+    foreach ($dirs as $dir) {
+      foreach (glob($path) as $file) {
+	$filename = basename($file);
+	if ( !in_array($file, $except) ) {
+	  if ( $rec && is_dir($file) && !in_array($filename, array('.','..')) )
+	    self::getFilesFromDir($file.'/*', $list, $exts, $except, $rec, 
+				  $cb_key, $cb_value);
+	  else if ( is_file($file) ) {
+	    if ( self::checkFilesExtension($filename, $exts) ) {
+	      $key   = ($cb_key) ? $cb_key($filename, $file) : $filename;
+	      $value = ($cb_value) ? $cb_value($file,$key) : $file;
+	      $list[$key] = $value; }}}}}
+  }
+  
+  
   /*!
   ** Checks if a file has a valid extension.
   **
@@ -62,10 +127,13 @@ class Ftp
 					     $depth = 0,
 					     $iae = 0)
   {
-    self::checkDebugInfo($depth+1, 4, $iae+1, 5);
-
-    if (!is_string($filename))
-      throw new InvalidArgumentException(1, 'string', gettype($filename),$iae);
+    Debug::checkArgs(0,
+		     4, 'int', $depth,
+		     4, array('greater than', -1), $depth,
+		     5, 'int', $iae,
+		     5, array('greater than', -1), $iae);
+    Debug::checkArgs($iae,
+		     1, 'string', $filename);
     
     if (Misc::isEmpty($exts))
       return (bool)$value_if_empty;
@@ -114,16 +182,16 @@ class Ftp
 			      $depth = 0,
 			      $iae = 0)
   {
-    self::checkDebugInfo($depth+1, 6, $iae+1, 7);
-    
-    if (!is_string($from))
-      throw new InvalidArgumentException(1, 'string', gettype($from),$iae);
-    else if ($from === '')
-      throw new InvalidArgumentException(1, 'string', gettype($to), $iae);
-    if (!is_string($to))
-      throw new InvalidArgumentException(2, 'string', gettype($from),$iae);
-    else if ($to === '')
-      throw new InvalidArgumentException(2, 'string', gettype($to), $iae);
+    Debug::checkArgs(0,
+		     6, 'int', $depth,
+		     6, array('greater than', -1), $depth,
+		     7, 'int', $iae,
+		     7, array('greater than', -1), $iae);
+    Debug::checkArgs($iae,
+		     1, 'string', $from,
+		     1, 'nonempty', $from,
+		     2, 'string', $to,
+		     2, 'nonempty', $to);
     
     if (is_file($from))
       self::moveFile($from, $to, $depth+1, $iae+1);
@@ -229,17 +297,15 @@ class Ftp
 				  $depth = 0,
 				  $iae = 0)
   {
-    self::checkDebugInfo($depth+1, 3, $iae+1, 4);
+    Debug::checkArgs(0,
+		     3, 'int', $depth,
+		     4, 'int', $iae);
+    Debug::checkArgs($iae,
+		     1, 'string', $from,
+		     1, 'nonempty', $from,
+		     2, 'string', $to,
+		     2, 'nonempty', $to);
 
-    if (!is_string($from))
-      throw new InvalidArgumentException(1, 'string', gettype($from),$iae);
-    else if ($from === '')
-      throw new InvalidArgumentException(1, 'nonempty', 'empty string', $iae);
-    if (!is_string($to))
-      throw new InvalidArgumentException(2, 'string', gettype($to), $iae);
-    else if ($to === '')
-      throw new InvalidArgumentException(2, 'nonempty', 'empty string', $iae);
-    
     self::moveFile_exec($from, $to, $depth);
   }
   
@@ -309,12 +375,14 @@ class Ftp
 				$depth = 0,
 				$iae = 0)
   {
-    self::checkDebugInfo($depth+1, 3, $iae+1, 4);
+    Debug::checkArgs(0,
+		     3, 'int', $depth,
+		     4, 'int', $iae);
+    Debug::checkArgs($iae,
+		     1, 'string or array', $files,
+		     1, 'nonempty', $files);
 
-    if (!is_string($files) && !is_array($files))
-      throw new InvalidArgumentException(1, 'string or array',gettype($files));
-    else if (!Misc::isEmpty($files))
-      throw new InvalidArgumentException(1, 'nonempty', 'empty value');
+    self::remove_exec($file, $recursive, $depth);
   }
    
 
@@ -335,8 +403,8 @@ class Ftp
   **     if \a filename is a directory, doesn’t exists, or isn’t writable.
   */
   static public function remove_exec($files,
-				$recursive = false,
-				$depth = 0)
+				     $recursive = false,
+				     $depth = 0)
   {
     $files = (array)$files;
     foreach($files as $filename) {
@@ -417,19 +485,16 @@ class Ftp
 				 $depth = 0,
 				 $iae = 0)
   {
-    self::checkDebugInfo($depth+1, 6, $iae+1, 7);
+    Debug::checkArgs(0,
+		     6, 'int', $depth,
+		     7, 'int', $iae);
+    Debug::checkArgs($iae,
+		     1, 'string or array', $dirs,
+		     1, 'nonempty', $dirs,
+		     2, 'int', $chmod,
+		     5, 'int', $umask_value);
 
-    if (!is_string($dirs) && !is_array($dirs))
-      throw new InvalidArgumentException(1, 'string or array', gettype($dirs),
-					 $iae);
-    else if (!Misc::isEmpty($dirs))
-      throw new InvalidArgumentException(1, 'nonempty', 'empty value', $iae);
-    if (!is_int($chmod) && !ctype_digit($chmod))
-      throw new InvalidArgumentException(2, 'integer', gettype($chmod),
-					 $iae);
-    if (!is_int($umask_value) && !ctype_digit($umask_value))
-      throw new InvalidArgumentException(5, 'integer', gettype($umask_value),
-					 $iae);
+    self::makeDir_exec($dirs,$chmod,$recursive,$umask,$umask_values,$depth);
   }
 
 
@@ -520,13 +585,13 @@ class Ftp
 				     $depth = 0,
 				     $iae = 0)
   {
-    self::checkDebugInfo($depth+1, 2, $iae+1, 3);
+    Debug::checkArgs(0,
+		     2, 'int', $depth,
+		     3, 'int', $iae);
+    Debug::checkArgs($iae,
+		     1, 'string', $file,
+		     1, 'nonempty', $file);
 
-    if (!is_string($file))
-      throw new InvalidArgumentException(1, 'string', gettype($file),$iae);
-    else if ($file === '')
-      throw new InvalidArgumentException(1, 'nonempty', 'empty string', $iae);
-    
     if (!is_file($file))
       throw new FtpException("$file is not readable.", $depth);
     return sprintf('%u', filesize($file));
@@ -565,13 +630,15 @@ class Ftp
 					$depth = 0,
 					$iae = 0)
   {
-    self::checkDebugInfo($depth+1, 4, $iae+1, 5);
+    Debug::checkArgs(0,
+		     4, 'int', $depth,
+		     5, 'int', $iae);
+    Debug::checkArgs($iae,
+		     2, 'char', $to);
 
     if (!preg_match('`^-?[0-9]+\.?[0-9]*[okmgt]?$`i', $size))
       throw new InvalidArgumentException(1, 'a number which can be followed '.
 					 'by a valid char', $size, $iae);
-    if (!is_string($to) || strlen($to) !== 1)
-      throw new InvalidArgumentException(2, 'char', gettype($to), $iae);
     $to = strtolower($to);
     if (!in_array($to, array('o', 'k', 'm', 'g', 't')))
       throw new InvalidArgumentException(2, 'an existing unit', $to, $iae);
@@ -637,12 +704,12 @@ class Ftp
 				     $depth = 0,
 				     $iae = 0)
   {
-    self::checkDebugInfo($depth+1, 2, $iae+1, 3);
-
-    if (!is_string($file))
-      throw new InvalidArgumentException(1, 'string', gettype($file), $iae);
-    else if ($file === '')
-      throw new InvalidArgumentException(1, 'nonempty', 'empty string', $iae);
+    Debug::checkArgs(0,
+		     2, 'int', $depth,
+		     3, 'int', $iae);
+    Debug::checkArgs($iae,
+		     1, 'string', $file,
+		     1, 'nonempty', $file);
     
     if (!is_file($file) || !is_readable($file))
       throw new FtpException("$file is not readable, or doesn’t exists.");
@@ -694,32 +761,22 @@ class Ftp
 				      $depth = 0,
 				      $iae = 0)
   {
-    self::checkDebugInfo($depth+1, 5, $iae+1, 6);
+    Debug::checkArgs(0,
+		     5, 'int', $depth,
+		     6, 'int', $iae);
+    Debug::checkArgs($iae,
+		     1, 'int', $w,
+		     1, array('greater than', 0), $w,
+		     2, 'int', $h,
+		     2, array('greater than', 0), $h,
+		     3, 'int', $max_w,
+		     3, array('greater than', 10), $max_w,
+		     4, 'int', $max_h,
+		     4, array('greater than', 10), $max_h);
     
-    if (!is_int($w) && !ctype_digit($w))
-      throw new InvalidArgumentException(1, 'int (greater than 0)',
-					 gettype($w), $iae);
-    else if ($w < 1)
-      throw new InvalidArgumentException(1, 'greater than 0', $w, $iae);
-    if (!is_int($h) && !ctype_digit($h))
-      throw new InvalidArgumentException(2, 'int (greater than 0)',
-					 gettype($h), $iae);
-    else if ($h < 1)
-      throw new InvalidArgumentException(2, 'greater than 0', $h, $iae);
-    if (!is_int($max_w) && !ctype_digit($max_w))
-      throw new InvalidArgumentException(3,'int (greater than 9)',
-					 gettype($max_w), $iae);
-    else if ($max_w < 10)
-      throw new InvalidArgumentException(3, 'greater than 9', $max_w, $iae);
-    if (!is_int($max_h) && !ctype_digit($max_h))
-      throw new InvalidArgumentException(4,'int (greater than 9)',
-					 gettype($max_h), $iae);
-    else if ($max_h < 10)
-      throw new InvalidArgumentException(4, 'greater than 9', $max_h, $iae);
-
     return self::rescaleImage_exec($w, $h, $max_w, $max_h);
   }
-
+  
   
   /*!
   ** Returns the new dimensions of an image to rescale.
@@ -753,45 +810,5 @@ class Ftp
       $new_w = $w;
       $new_h = $h;}
     return array('width' => $new_w, 'height' => $new_h);
-  }
-  
-  
-  /*!
-  ** Check debuging information.
-  **
-  ** \param depth
-  **          \c int - Depth for debugage information.
-  ** \param d_num
-  **          \c int - Number of the parameter of depth.
-  ** \param iae
-  **          \c int - Depth for InvalidArgumentException.
-  ** \param iae_num
-  **          \c int - Number of the parameter of iae.
-  ** \param min
-  **          \c int - This number is used to cancelled all the "+1"
-  **                   made on the \a depth and \a iae.
-  **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
-  **     if \a depth is not an int or less than 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
-  **     if \a iae is not an int or less than 0.
-  */
-  static private function checkDebugInfo($depth,
-					 $d_num,
-					 $iae,
-					 $iae_num,
-					 $min = 1)
-  {
-    if (!is_int($iae) && !ctype_digit($iae))
-      throw new InvalidArgumentException($iae_num, 'int', gettype($iae));
-    else if ($iae < $min)
-      throw new InvalidArgumentException($iae_num, 'greater or equal to 0',
-					 $iae);
-    if (!is_int($depth) && !ctype_digit($depth))
-      throw new InvalidArgumentException($d_num, 'int', gettype($depth),
-					 $iae);
-    else if ($depth < $min)
-      throw new InvalidArgumentException($d_num, 'greater or equal to 0',
-					 $depth, $iae);
   }
 }
