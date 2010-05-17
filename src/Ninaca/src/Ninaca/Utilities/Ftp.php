@@ -4,7 +4,7 @@
 **  \file	Ftp.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	09/13/2009, 06:53 PM
-**  \last	Nivl <nivl@free.fr> 05/09/2010, 05:03 PM
+**  \last	Nivl <nivl@free.fr> 05/17/2010, 12:19 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -17,7 +17,7 @@
 namespace Ninaca\Utilities;
 use \Ninaca\Utilities\Misc;
 use \Ninaca\Exceptions\FtpException;
-use \Ninaca\Exceptions\InvalidArgumentException;
+ise \Ninaca\Exceptions\InvalidArgumentTypeException as Iate;
 
 
 /*!
@@ -52,14 +52,14 @@ class Ftp
   **          \c \Closure - Callback Function for the filepath.
   ** \param [depth]
   **          \c int - Depth for debugage informations.
-  ** \param [iae]
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param [iate]
+  **          \c int - Depth for InvalidArgumentTypeException.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a iae is not an int or less than 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not an int or less than 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a path is not a string or is empty.
   */
   static public function getFilesFromDir($path,
@@ -70,13 +70,13 @@ class Ftp
 					  \Closure $cb_key = null,
 					  \Closure $cb_value = null
 					  $depth = 0,
-					  $iae = 0)
+					  $iate = 0)
   {
     Debug::checkArgs(0,
 		     8, 'int', $depth,
 		     8, array('greater than', -1), $depth,
-		     9, 'int', $iae,
-		     9, array('greater than', -1), $iae);
+		     9, 'int', $iate,
+		     9, array('greater than', -1), $iate);
     Debug::checkArgs($aie,
 		     1, 'string or array', $path,
 		     1, 'nonempty', $path);
@@ -109,14 +109,14 @@ class Ftp
   **          \c bool - Value to return if \a exts is empty.
   ** \param [depth]
   **          \c int - Depth for debugage informations.
-  ** \param [iae]
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param [iate]
+  **          \c int - Depth for InvalidArgumentTypeException.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a iae is not an int or less than 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not an int or less than 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a filename is not a string.
   **
   ** \return \c bool
@@ -125,14 +125,14 @@ class Ftp
 					     array $exts,
 					     $value_if_empty = true,
 					     $depth = 0,
-					     $iae = 0)
+					     $iate = 0)
   {
     Debug::checkArgs(0,
 		     4, 'int', $depth,
 		     4, array('greater than', -1), $depth,
-		     5, 'int', $iae,
-		     5, array('greater than', -1), $iae);
-    Debug::checkArgs($iae,
+		     5, 'int', $iate,
+		     5, array('greater than', -1), $iate);
+    Debug::checkArgs($iate,
 		     1, 'string', $filename);
     
     if (Misc::isEmpty($exts))
@@ -162,16 +162,16 @@ class Ftp
   **            \arg extensions \c array  - Extensions of the files.
   ** \param [depth]
   **          \c int - Depth for debugage information.
-  ** \param [iae]
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param [iate]
+  **          \c int - Depth for InvalidArgumentTypeException.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a from is not a string or is empty.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a to is not a string or is empty.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not an int or less than 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a iae is not an int or less than 0.
   */
   static public function move($from,
@@ -180,21 +180,21 @@ class Ftp
 			      $keep_dir = true,
 			      array $options = array(),
 			      $depth = 0,
-			      $iae = 0)
+			      $iate = 0)
   {
     Debug::checkArgs(0,
 		     6, 'int', $depth,
 		     6, array('greater than', -1), $depth,
-		     7, 'int', $iae,
-		     7, array('greater than', -1), $iae);
-    Debug::checkArgs($iae,
+		     7, 'int', $iate,
+		     7, array('greater than', -1), $iate);
+    Debug::checkArgs($iate,
 		     1, 'string', $from,
 		     1, 'nonempty', $from,
 		     2, 'string', $to,
 		     2, 'nonempty', $to);
     
     if (is_file($from))
-      self::moveFile($from, $to, $depth+1, $iae+1);
+      self::moveFile($from, $to, $depth+1, $iate+1);
     else
       self::move_exec($from, $to, $rec, $keep_dir, $options, $depth+1);
   }
@@ -258,9 +258,9 @@ class Ftp
 			    $keep_dir = true,
 			    array $options = array(),
 			    $depth = 0,
-			    $iae = 0)
+			    $iate = 0)
   {
-    self::move($from, $to, $rec, $keep_dir, $options, $depth+1, $iae+1);
+    self::move($from, $to, $rec, $keep_dir, $options, $depth+1, $iate+1);
   }
   
   
@@ -273,18 +273,18 @@ class Ftp
   **          \c string - New filename or destination directory’s name.
   ** \param [depth]
   **          \c int - Depth for debugage information.
-  ** \param [iae]
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param [iate]
+  **          \c int - Depth for InvalidArgumentTypeException.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a from is not a string or is empty.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a to is not a string or is empty.
   ** \throw Ninaca\Exceptions\FtpException
   **     if the move fails.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not an int or less than 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a iae is not an int or less than 0.
   **
   ** \usage
@@ -295,12 +295,12 @@ class Ftp
   static public function moveFile($from,
 				  $to,
 				  $depth = 0,
-				  $iae = 0)
+				  $iate = 0)
   {
     Debug::checkArgs(0,
 		     3, 'int', $depth,
-		     4, 'int', $iae);
-    Debug::checkArgs($iae,
+		     4, 'int', $iate);
+    Debug::checkArgs($iate,
 		     1, 'string', $from,
 		     1, 'nonempty', $from,
 		     2, 'string', $to,
@@ -358,14 +358,14 @@ class Ftp
   **          \c string - Remove (sub-)directories and their contents.
   ** \param [depth]
   **          \c int - Depth for debugage information.
-  ** \param [iae]
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param [iate]
+  **          \c int - Depth for InvalidArgumenTypetException.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a file is not a string or is empty.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not an int or less to 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a iae is not an int or less to 0.
   ** \throw Ninaca\Exceptions\FtpException
   **     if \a filename is a directory, doesn’t exists, or isn’t writable.
@@ -373,12 +373,12 @@ class Ftp
   static public function remove($files,
 				$recursive = false,
 				$depth = 0,
-				$iae = 0)
+				$iate = 0)
   {
     Debug::checkArgs(0,
 		     3, 'int', $depth,
-		     4, 'int', $iae);
-    Debug::checkArgs($iae,
+		     4, 'int', $iate);
+    Debug::checkArgs($iate,
 		     1, 'string or array', $files,
 		     1, 'nonempty', $files);
 
@@ -436,9 +436,9 @@ class Ftp
   static public function rm($files,
 			    $recursive = false,
 			    $depth = 0,
-			    $iae = 0)
+			    $iate = 0)
   {
-    return self::remove($files, (bool)$recursive, $depth+1, $iae+1);
+    return self::remove($files, (bool)$recursive, $depth+1, $iate+1);
   }
   
   
@@ -459,20 +459,20 @@ class Ftp
   **          \c bool - Value to give to umask.
   ** \param [depth]
   **          \c int - Depth for debugage information.
-  ** \param [iae]
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param [iate]
+  **          \c int - Depth for InvalidArgumentTypeException.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not an int or less to 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a iae is not an int or less to 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a dirs is not a string or array.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a dirs is empty.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a chmod is not an integer.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a umask_value is not an integer.
   ** \throw Ninaca\Exceptions\FtpException
   **        if the make fails.
@@ -483,12 +483,12 @@ class Ftp
 				 $umask = true,
 				 $umask_value = 0,
 				 $depth = 0,
-				 $iae = 0)
+				 $iate = 0)
   {
     Debug::checkArgs(0,
 		     6, 'int', $depth,
-		     7, 'int', $iae);
-    Debug::checkArgs($iae,
+		     7, 'int', $iate);
+    Debug::checkArgs($iate,
 		     1, 'string or array', $dirs,
 		     1, 'nonempty', $dirs,
 		     2, 'int', $chmod,
@@ -553,10 +553,10 @@ class Ftp
 			       $umask = true,
 			       $umask_value = 0,
 			       $depth = 0,
-			       $iae = 0)
+			       $iate = 0)
   {
     return $this->makeDir($dirs, $chmod, $recursive, $umask, $umask_value,
-			  $depth+1, $iae+1);
+			  $depth+1, $iate+1);
   }
 
 
@@ -567,28 +567,28 @@ class Ftp
   **          \c string
   ** \param [depth]
   **          \c int - Depth for debugage information.
-  ** \param [iae]
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param [iate]
+  **          \c int - Depth for InvalidArgumentTypeException.
   **
   ** \throw Ninaca\Exceptions\FtpException
   **     if \a file isn’t readable or doesn’t exists.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a file is not a string or is empty.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not an int or less to 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a iae is not an int or less to 0.
   **
   ** \return \c string
   */
   static public function getFileSize($file,
 				     $depth = 0,
-				     $iae = 0)
+				     $iate = 0)
   {
     Debug::checkArgs(0,
 		     2, 'int', $depth,
-		     3, 'int', $iae);
-    Debug::checkArgs($iae,
+		     3, 'int', $iate);
+    Debug::checkArgs($iate,
 		     1, 'string', $file,
 		     1, 'nonempty', $file);
 
@@ -610,16 +610,16 @@ class Ftp
   **          \c bool - 1M = 1000o if true, else 1M = 1024.
   ** \param [depth]
   **          \c int - Depth for debugage information.
-  ** \param [iae]
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param [iate]
+  **          \c int - Depth for InvalidArgumentTypeException.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a size is not valid.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a to is not a valid char.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not an int or less to 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a iae is not an int or less to 0.
   **
   ** \return \c int|float
@@ -628,20 +628,20 @@ class Ftp
 					$to = 'o',
 					$si = false,
 					$depth = 0,
-					$iae = 0)
+					$iate = 0)
   {
     Debug::checkArgs(0,
 		     4, 'int', $depth,
-		     5, 'int', $iae);
-    Debug::checkArgs($iae,
+		     5, 'int', $iate);
+    Debug::checkArgs($iate,
 		     2, 'char', $to);
 
     if (!preg_match('`^-?[0-9]+\.?[0-9]*[okmgt]?$`i', $size))
-      throw new InvalidArgumentException(1, 'a number which can be followed '.
-					 'by a valid char', $size, $iae);
+      throw new Iate(1, 'a number which can be followed '.
+					 'by a valid char', $size, $iate);
     $to = strtolower($to);
     if (!in_array($to, array('o', 'k', 'm', 'g', 't')))
-      throw new InvalidArgumentException(2, 'an existing unit', $to, $iae);
+      throw new Iate(2, 'an existing unit', $to, $iate);
     
     self::octetConverter_exec($size, $to, $si);
   }
@@ -686,28 +686,28 @@ class Ftp
   **          \c string
   ** \param [depth]
   **          \c int - Depth for debugage information.
-  ** \param [iae]
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param [iate]
+  **          \c int - Depth for InvalidArgumentTypeException.
   **
   ** \throw Ninaca\Exceptions\FtpException
   **     if \a file isn’t readable or doesn’t exists.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a file is not a string or is empty.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not an int or less to 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a iae is not an int or less to 0.
   ** 
   ** \return \c string
   */
   static public function getMimeType($file,
 				     $depth = 0,
-				     $iae = 0)
+				     $iate = 0)
   {
     Debug::checkArgs(0,
 		     2, 'int', $depth,
-		     3, 'int', $iae);
-    Debug::checkArgs($iae,
+		     3, 'int', $iate);
+    Debug::checkArgs($iate,
 		     1, 'string', $file,
 		     1, 'nonempty', $file);
     
@@ -734,20 +734,20 @@ class Ftp
   **          \c int - Max width ( >= 10).
   ** \param [depth]
   **          \c int - Depth for debugage information.
-  ** \param [iae]
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param [iate]
+  **          \c int - Depth for InvalidArgumenTypetException.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a w is not an int greater than 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a h is not an int greater than 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a max_w is not an int greater than 9.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a max_h is not an int greater than 9.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not an int or less than 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a iae is not an int or less than 0.
   **
   ** \return \c array
@@ -759,12 +759,12 @@ class Ftp
 				      $max_w = 200,
 				      $max_h = 200,
 				      $depth = 0,
-				      $iae = 0)
+				      $iate = 0)
   {
     Debug::checkArgs(0,
 		     5, 'int', $depth,
-		     6, 'int', $iae);
-    Debug::checkArgs($iae,
+		     6, 'int', $iate);
+    Debug::checkArgs($iate,
 		     1, 'int', $w,
 		     1, array('greater than', 0), $w,
 		     2, 'int', $h,

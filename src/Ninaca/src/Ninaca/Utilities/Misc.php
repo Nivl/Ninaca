@@ -4,7 +4,7 @@
 **  \file	Misc.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	07/17/2009, 12:01 AM
-**  \last	Nivl <nivl@free.fr> 05/01/2010, 12:23 AM
+**  \last	Nivl <nivl@free.fr> 05/17/2010, 12:11 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -61,7 +61,7 @@ class Misc
   ** \param str
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a str isn’t a string.
   **
   ** \return \c string

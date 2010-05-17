@@ -4,7 +4,7 @@
 **  \file	InvalidArgumentException.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	05/17/2010, 11:42 AM
-**  \last	Nivl <nivl@free.fr> 05/17/2010, 11:43 AM
+**  \last	Nivl <nivl@free.fr> 05/17/2010, 12:01 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -20,7 +20,7 @@ namespace Ninaca\Exceptions;
 /*!
 ** Used to throw exceptions for any invalid arguments.
 */
-Class InvalidArgumentException extends \InvalidArgumentException
+Class InvalidArgumentException extends Exception
 {
   
 }

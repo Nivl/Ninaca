@@ -4,7 +4,7 @@
 **  \file	SyckYaml.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	08/28/2009, 11:32 PM
-**  \last	Nivl <nivl@free.fr> 05/14/2010, 01:32 AM
+**  \last	Nivl <nivl@free.fr> 05/17/2010, 01:37 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -35,9 +35,9 @@ class Syck implements Yaml
   ** \param yaml
   **          \c array|string - YAML file, or array to parse.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a file is not a string or is empty.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a yaml is not a string or array.
   ** \throw Ninaca\Exceptions\FtpException
   **     if the storage fails.
@@ -45,12 +45,10 @@ class Syck implements Yaml
   public function store($file,
 			$yaml)
   {
-    if (!is_string($file))
-      throw new InvalidArgumentException(1, 'string', gettype($file));
-    if ($file === '')
-      throw new InvalidArgumentException(1, 'nonempty', 'empty string');
-    if (!is_string($yaml) && !is_array($yaml))
-      throw new InvalidArgumentException(2, 'string or array', gettype($yaml));
+    Debug::checkArg(0,
+		    1, 'string', $file,
+		    1, 'nonempty', $file,
+		    2, 'nonempty', $yaml);
     
     if (is_array($yaml))
       $yaml = syck_dump($yaml);
@@ -81,15 +79,15 @@ class Syck implements Yaml
   ** \param yaml
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a yaml is not a string.
   **
   ** \return \c array
   */
   public function load($yaml)
   {
-    if (!is_string($yaml))
-      throw new InvalidArgumentException(1, 'string', gettype($yaml));
+    Debug::checkArg(0,
+		    1, 'string', $yaml);
 
     if (strpos($yaml, "\n") === false && is_file($yaml))
       return $this->loadFile($yaml);
@@ -106,7 +104,7 @@ class Syck implements Yaml
   ** \param file
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a file is not a string or is empty.
   ** \throw Ninaca\Exceptions\FtpException
   **     if \a file is not readable or doesn’t exists.
@@ -115,10 +113,9 @@ class Syck implements Yaml
   */
   public function loadFile($file)
   {
-    if (!is_string($file))
-      throw new InvalidArgumentException(1, 'string', gettype($file));
-    if ($file === '')
-      throw new InvalidArgumentException(1, 'nonempty', 'empty string');
+    Debug::checkArg(0,
+		    1, 'string', $file,
+		    1, 'nonempty', $file);
     
     if (!is_file($file) || !is_readable($file))
       throw new FtpException("$file is not readable or doesn’t exists.");

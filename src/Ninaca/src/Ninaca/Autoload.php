@@ -4,7 +4,7 @@
 **  \file	Autoload.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	03/31/2010, 04:52 PM
-**  \last	Nivl <nivl@free.fr> 04/21/2010, 11:11 PM
+**  \last	Nivl <nivl@free.fr> 05/17/2010, 12:57 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -16,7 +16,7 @@
 
 namespace Ninaca;
 use Ninaca\Exceptions\Exception;
-use Ninaca\Exceptions\InvalidArgumentException;
+use Ninaca\Exceptions\InvalidArgumentTypeException as Iate;
 use Ninaca\Exceptions\RuntimeException;
 
 
@@ -83,12 +83,15 @@ class Autoload
   ** \param [id]
   **          \c string|null - Instance’s id (if you use several instances).
   **
+  ** \throw Ninaca\Exceptions\InvalidArgumenTypetException
+  **     if \a id is not null or is not a string.
+  **
   ** \return \c Autoload
   */
   static public function getInstance($id = null)
   {
     if ($id !== null && !is_string($id))
-      throw new InvalidArgumentException(1, 'string or null', gettype($id));
+      throw new Iate(1, 'string or null', gettype($id));
 
     $class = __CLASS__;
     if ($id === null) {
@@ -108,7 +111,7 @@ class Autoload
   ** \param namespaces
   **          \c array - [name] => p/a/t/h.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if a key or a path is not a string.
   ** \throw Ninaca\Exceptions\Exception
   **     if a namespace has already been defined.
@@ -119,11 +122,9 @@ class Autoload
   {
     foreach ($namespaces as $ns => $path) {
       if (!is_string($ns))
-	throw new InvalidArgumentException(1, 'array with string as key',
-					   gettype($ns));
+	throw new Iate(1, 'array with string as key', gettype($ns));
       if (!is_string($path))
-	throw new InvalidArgumentException(1, 'array with string as value',
-					   gettype($path));
+	throw new Iate(1, 'array with string as value', gettype($path));
       if (isset($this->_namespaces[$ns]))
 	throw new Exception("The namespace $ns has already been defined.");
       else if ($this->_check_path && !is_dir($path))
@@ -141,7 +142,7 @@ class Autoload
   ** \param path
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if a key or a path is not a string.
   ** \throw Ninaca\Exceptions\Exception
   **     if a namespace has already been defined.
@@ -152,9 +153,9 @@ class Autoload
 			       $path)
   {
     if (!string($ns))
-      throw new InvalidArgumentException(1, 'string', gettype($ns));
+      throw new Iate(1, 'string', gettype($ns));
     if (!string($path))
-      throw new InvalidArgumentException(2, 'string', gettype($path));
+      throw new Iate(2, 'string', gettype($path));
     if (isset($this->_namespaces[$ns]))
       throw new Exception("The namespace $ns has already been defined.");
     else if ($this->_check_path && !is_dir($path))
@@ -170,7 +171,7 @@ class Autoload
   ** \param prefixes
   **          \c array - [name] => p/a/t/h.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if a key or a path is not a string.
   ** \throw Ninaca\Exceptions\Exception
   **     if a prefix has already been defined.
@@ -181,11 +182,9 @@ class Autoload
   {
     foreach ($prefixes as $prefix => $path) {
       if (!string($prefix))
-	throw new InvalidArgumentException(1, 'array with string as key',
-					 gettype($prefix));
+	throw new Iate(1, 'array with string as key', gettype($prefix));
       if (!string($path))
-	throw new InvalidArgumentException(1, 'array with string as value',
-					   gettype($path));
+	throw new Iate(1, 'array with string as value', gettype($path));
       if (isset($this->_prefixes[$prefix]))
 	throw new Exception("The prefix $prefix has already been defined.");
       else if ($this->_check_path && !is_dir($path))
@@ -203,7 +202,7 @@ class Autoload
   ** \param path
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if a key or a path is not a string.
   ** \throw Ninaca\Exceptions\Exception
   **     if a prefix has already been defined.
@@ -214,14 +213,14 @@ class Autoload
 			    $path)
   {
     if (!string($prefix))
-      throw new InvalidArgumentException(1, 'string', gettype($prefix));
+      throw new Iate(1, 'string', gettype($prefix));
     if (!string($path))
-      throw new InvalidArgumentException(2, 'string', gettype($path));
+      throw new Iate(2, 'string', gettype($path));
     if (isset($this->_prefixes[$prefix]))
       throw new Exception("The prefix $prefix has already been defined.");
     else if ($this->_check_path && !is_dir($path))
       throw new Exception("$path doesn’t exists.");
-
+    
     $this->_prefixes[$prefix] = $path;
   }
 
@@ -234,7 +233,7 @@ class Autoload
   ** \param links
   **          \c array - [class/interface's name with namespace] => f/i/l/e.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if a key or a file is not a string or if the filename is empty.
   ** \throw Ninaca\Exceptions\Exception
   **     if a class/interface has already been defined.
@@ -245,14 +244,12 @@ class Autoload
   {
     foreach ($links as $class => $file) {
       if (!string($class))
-	throw new InvalidArgumentException(1, 'array with string as key',
-					   gettype($class));
+	throw new Iate(1, 'array with string as key', gettype($class));
       if (!string($file))
-	throw new InvalidArgumentException(1, 'array with string as value',
-					   gettype($file));
+	throw new Iate(1, 'array with string as value', gettype($file));
       if ($file === '')
-	throw new InvalidArgumentException(
-	  1, 'array with nonempty string as value', 'empty string');
+	throw new Iate(1, 'array with nonempty string as value',
+		       'empty string');
       if (isset($this->_links[$class]))
 	throw new Exception("The $link $class has already been defined.");
       else if ($this->_check_path && !is_file($file))
@@ -272,7 +269,7 @@ class Autoload
   ** \param file
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a file is not a string, or empty.
   ** \throw Ninaca\Exceptions\Exception
   **     if \a class has already been defined.
@@ -282,15 +279,11 @@ class Autoload
   public function addLink($class, $file)
   {
     if (!string($class))
-      throw new InvalidArgumentException(1, 'array with string as key',
-					 gettype($class));
+      throw new Iate(1, 'array with string as key', gettype($class));
     if (!string($file))
-      throw new InvalidArgumentException(1, 'array with string as value',
-					 gettype($file));
+      throw new Iate(1, 'array with string as value', gettype($file));
     if ($file === '')
-      throw new InvalidArgumentException(1,
-					 'array with nonempty string as value',
-					 'empty string');
+      throw new Iate(1, 'array with nonempty string as value', 'empty string');
     if (isset($this->_links[$class]))
       throw new Exception("The $link $class has already been defined.");
     else if ($this->_check_path && !is_file($file))
@@ -354,7 +347,7 @@ class Autoload
   public function loadClass($class)
   {
     if (!is_string($class))
-      throw new InvalidArgumentException(1, 'string', gettype($class));
+      throw new Iate(1, 'string', gettype($class));
 
     if (isset($this->files[$class]))
       include $this->files[$class];

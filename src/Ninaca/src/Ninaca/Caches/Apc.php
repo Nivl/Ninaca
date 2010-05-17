@@ -4,7 +4,7 @@
 **  \file	Apc.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	07/29/2009, 03:54 PM
-**  \last	Nivl <nivl@free.fr> 05/15/2010, 11:33 PM
+**  \last	Nivl <nivl@free.fr> 05/17/2010, 01:25 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -17,7 +17,6 @@
 namespace Ninaca\Caches;
 use Ninaca\Utilities\Misc;
 use Ninaca\Exceptions\CacheException;
-use Ninaca\Exceptions\InvalidArgumentException;
 
 
 /*!
@@ -63,7 +62,7 @@ class Apc implements Cache
   ** \param key
   **          \c string
   ** 
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a key isn’t a string or is empty (the directory separator is
   **       considered as empty).
   ** \throw Ninaca\Exceptions\CacheException
@@ -71,10 +70,9 @@ class Apc implements Cache
   */
   public function delete($key)
   {
-    if (!is_string($key))
-      throw new InvalidArgumentException(1, 'string', gettype($key));
-    if (Misc::trim($key) === '' || $key === DIRECTORY_SEPARATOR)
-      throw new InvalidArgumentException(1, 'nonempty string', 'empty string');
+    Debug::checkArg(0,
+		    1, 'string', $key,
+		    1, 'nonempty', trim($key, DIRECTORY_SEPARATOR));
     
     if (!apc_delete($key))
       throw new CacheException("$key can’t be deleted. Is $key exists?");
@@ -87,7 +85,7 @@ class Apc implements Cache
   ** \param key
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a key isn’t a string or is empty (the directory separator is
   **       considered as empty).
   ** \throw Ninaca\Exceptions\CacheException if \a key is not found.
@@ -96,10 +94,9 @@ class Apc implements Cache
   */
   public function get($key)
   {
-    if (!is_string($key))
-      throw new InvalidArgumentException(1, 'string', gettype($key));
-    if (Misc::trim($key) === '' || $key === DIRECTORY_SEPARATOR)
-      throw new InvalidArgumentException(1, 'nonempty string', 'empty string');
+    Debug::checkArg(0,
+		    1, 'string', $key,
+		    1, 'nonempty', trim($key, DIRECTORY_SEPARATOR));
     
     $success = false;
     $return = apc_fetch($key, $success);
@@ -115,7 +112,7 @@ class Apc implements Cache
   ** \param key
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a key isn’t a string or is empty (the directory separator is
   **       considered as empty).
   ** \throw Ninaca\Exceptions\CacheException
@@ -125,10 +122,9 @@ class Apc implements Cache
   */
   public function exists($key)
   {
-    if (!is_string($key))
-      throw new InvalidArgumentException(1, 'string', gettype($key));
-    if (Misc::trim($key) === '' || $key === DIRECTORY_SEPARATOR)
-      throw new InvalidArgumentException(1, 'nonempty string', 'empty string');
+    Debug::checkArg(0,
+		    1, 'string', $key,
+		    1, 'nonempty', trim($key, DIRECTORY_SEPARATOR));
     
     $success = false;
     apc_fetch($key, $success);
@@ -148,10 +144,10 @@ class Apc implements Cache
   ** \param [overwrite]
   **         \c bool - Overwrite existing data.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a key isn’t a string or is empty (the directory separator is
   **       considered as empty).
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a liftime isn’t an int.
   ** \throw Ninaca\Exceptions\CacheException
   **     if the data can’t be stored.
@@ -161,13 +157,11 @@ class Apc implements Cache
 			$lifetime = 0,
 			$overwrite = true)
   {
-    if (!is_string($key))
-      throw new InvalidArgumentException(1, 'string', gettype($key));
-    if (Misc::trim($key) === '' || $key === DIRECTORY_SEPARATOR)
-      throw new InvalidArgumentException(1, 'nonempty string', 'empty string');
-    if (!is_int($lifetime) && ctype_digit($lifetime))
-      throw new InvalidArgumentException(3, 'int', gettype($lifetime));
-
+    Debug::checkArg(0,
+		    1, 'string', $key,
+		    1, 'nonempty', trim($key, DIRECTORY_SEPARATOR),
+		    3, 'int', $lifetime);
+    
     $func = $overwrite ? 'apc_store' : 'apc_add';
     if (!$func($key, $var, $lifetime)) {
       if ($overwrite)
@@ -204,11 +198,11 @@ class Apc implements Cache
   ** \param [suf]
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a dir isn’t a string.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a pre isn’t a string.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a suf isn’t a string.
   ** \throw Ninaca\Exceptions\CacheException
   **     if a deletion fails.
@@ -218,12 +212,10 @@ class Apc implements Cache
 			$pre = '',
 			$suf = '')
   {
-    if (!is_string($dir))
-      throw new InvalidArgumentException(1, 'string', gettype($dir));
-    if (!is_string($pre))
-      throw new InvalidArgumentException(3, 'string', gettype($pre));
-    if (!is_string($suf))
-      throw new InvalidArgumentException(4, 'string', gettype($suf));
+    Debug::checkArg(0,
+		    1, 'string', $dir,
+		    3, 'string', $pre,
+		    4, 'string', $suf);
     
     $dir .= mb_substr($dir, -1) !== '/' && !empty($dir) ? '/' : '';
     $cacheInfo = apc_cache_info('user');

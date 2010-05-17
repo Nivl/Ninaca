@@ -4,7 +4,7 @@
 **  \file	Debug.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	04/16/2010, 04:31 PM
-**  \last	Nivl <nivl@free.fr> 05/17/2010, 11:36 AM
+**  \last	Nivl <nivl@free.fr> 05/17/2010, 12:20 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -33,9 +33,9 @@ class Debug
   ** \param [real]
   **          \c bool - Use the real depth.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a depth is not a int >= 0.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a count is not a int >= 0.
   **
   ** \return \c array
@@ -194,8 +194,8 @@ class Debug
   **
   ** \param depth
   **          \c int - Depth for debugage information.
-  ** \param iae
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param iate
+  **          \c int - Depth for InvalidArgumentTypeException.
   ** \param [arg_num]
   **          \c int - Number of the argument.
   ** \param [type]
@@ -207,11 +207,11 @@ class Debug
   ** \param [arg]
   ** \param […]
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if the number of a parameter isn’t an int.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if the type of a parameter isn’t an array or string.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if a test fails.
   **
   ** \usage
@@ -222,9 +222,9 @@ class Debug
   **                  2, array('greater than', 17), $age);
   ** \endusage
   */
-  static public function checkArgs($iae)
+  static public function checkArgs($iate)
   {
-    $iae     += 1;
+    $iate     += 1;
     $args    = func_get_args();
     $nb_args = count($args);
     
@@ -239,7 +239,7 @@ class Debug
 	  throw new Iate($i, 'int', gettype($arg));
 	$num = $arg;}
       else
-	self::checkArgs_check($num, $type, $arg, $iae);}
+	self::checkArgs_check($num, $type, $arg, $iate);}
   }
   
   
@@ -253,35 +253,35 @@ class Debug
   **          \c string|array - Expected type.
   ** \param arg
   **          \c mixed - Value of the argument.
-  ** \param iae
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param iate
+  **          \c int - Depth for InvalidArgumentTypeException.
   */
   static private function checkArgs_check($num,
 					  array $type,
 					  $arg,
-					  $iae)
+					  $iate)
   {
-    $iae   += 1;
+    $iate   += 1;
     $types = array('int','integer','string','char','nonempty','ressource',
 		   'string or array', 'array or string');
-    if (!is_array($type) && !in_array(($type, $types))
+    if (!is_array($type) && !in_array(($type, $types)))
 	throw new Iate($i, 'an existing type', $type);
 
     if (($type === 'int' || $type === 'integer') && !Misc::isInt($arg))
-      throw new Iate($num, 'int', gettype($arg), $iae);
+      throw new Iate($num, 'int', gettype($arg), $iate);
     else if ($type === 'string' && !is_string($arg))
-      throw new Iate($num, 'string', gettype($arg), $iae);
+      throw new Iate($num, 'string', gettype($arg), $iate);
     else if ($type === 'char' && !is_string($arg) && mb_strlen($arg) > 1)
-      throw new Iate($num, 'char', gettype($arg), $iae);
+      throw new Iate($num, 'char', gettype($arg), $iate);
     else if ($type === 'nonempty' && Misc::isEmpty($arg))
-      throw new Iate($num, 'nonempty', 'empty value', $iae);
+      throw new Iate($num, 'nonempty', 'empty value', $iate);
     else if ($type === 'ressource' && !$arg)
-      throw new Iate($num, 'ressource', gettype($arg), $iae);
+      throw new Iate($num, 'ressource', gettype($arg), $iate);
     else if (($type === 'string or array' || $type === 'array or string')
 	     && !is_string($arg) && !is_array($arg))
-      throw new Iate($num, 'string or array', gettype($arg), $iae);
+      throw new Iate($num, 'string or array', gettype($arg), $iate);
     else if (is_array($type) && count($type) == 2 && isset($type[0],$type[1]))
-      self::checkArgs_checkArray($num, $type, $arg, $iae);
+      self::checkArgs_checkArray($num, $type, $arg, $iate);
   }
 
 
@@ -298,27 +298,27 @@ class Debug
   **          \c array - Expected type.
   ** \param arg
   **          \c mixed - Value of the argument.
-  ** \param iae
-  **          \c int - Depth for InvalidArgumentException.
+  ** \param iate
+  **          \c int - Depth for InvalidArgumenTypetException.
   */
   static private function checkArgs_checkArray($num,
 					       array $type,
 					       $arg,
-					       $iae)
+					       $iate)
   {
-    $iae += 1;
+    $iate += 1;
     $types = array('greater than', 'less than', 'equal to');
     if (!in_array(($type[0], $types))
 	throw new Iate($i, 'an existing type', $type[0], 1);
     
     if ($type[0] === 'greater than' && Misc::isInt($type[1])) {
       if ($arg <= $type[1])
-	throw new Iate($num, "greater than {$type[1]}", $arg, $iae);}
+	throw new Iate($num, "greater than {$type[1]}", $arg, $iate);}
     else if ($type[0] === 'less than' && Misc::isInt($type[1])) {
       if ($arg >= $type[1])
-	throw new Iate($num, "less than {$type[1]}", $arg, $iae);}
+	throw new Iate($num, "less than {$type[1]}", $arg, $iate);}
     else if ($type[0] === 'equal to' && $type[1] != $arg)
-      throw new Iate($num, "equal to {$type[1]}", $arg, $iae);
+      throw new Iate($num, "equal to {$type[1]}", $arg, $iate);
   }
 }
 

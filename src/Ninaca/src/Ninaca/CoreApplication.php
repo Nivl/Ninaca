@@ -4,7 +4,7 @@
 **  \file	CoreApplication.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	03/30/2010, 10:34 PM
-**  \last	Nivl <nivl@free.fr> 05/09/2010, 05:07 PM
+**  \last	Nivl <nivl@free.fr> 05/17/2010, 01:01 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -15,6 +15,7 @@
 
 
 namespace Ninaca;
+use Ninaca\Configuration as Config;
 use Ninaca\Exceptions\Exception;
 use Ninaca\Exceptions\InvalidArgumentException;
 use Ninaca\Exceptions\RuntimeException;
@@ -77,6 +78,8 @@ abstract class CoreApplication
 			      'error2Exception'));}
     else
       init_set('display_error', 0);
+    $this->loadConfig();
+    $this->checkApp();
   }
   
   
@@ -85,7 +88,6 @@ abstract class CoreApplication
   */
   public function run()
   {
-    
   }
   
   
@@ -106,12 +108,15 @@ abstract class CoreApplication
   ** \param [precision]
   **          \c int - The number of decimal digits to round to.
   **
+  ** \throw Ninaca\Exceptions\InvalidArgumenTypetException
+  **     if \a precision is not an int.
+  **
   ** \return \c int
   */
   public function getExecTime($precision = 4)
   {
-    if (!is_int($precision) && !ctype_digit($precision))
-      throw new InvalidArgumentException(1, 'int', gettype($precision));
+    Debug::checkArg(0,
+		    1, 'int', gettype($precision));
     
     return round(microtime(true) - $this->_start_time, $precision);
   }
@@ -124,8 +129,7 @@ abstract class CoreApplication
   */
   protected function loadConfig()
   {
-    $class = $this->_debug ? 'DebugConfig' : 'Config';
-    $this->_configs['settings'] = new $class($this->getConfigFile());
-    $this->_configs['routes'] = new $class($this->getRoutesConfigFile());
+    $this->_configs['settings'] = new Config($this->getConfigFile());
+    $this->_configs['routes'] = new Config($this->getRoutesConfigFile());
   }
 }

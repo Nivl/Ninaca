@@ -4,7 +4,7 @@
 **  \file	File.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	12/20/08
-**  \last	Nivl <nivl@free.fr> 05/15/2010, 11:34 PM
+**  \last	Nivl <nivl@free.fr> 05/17/2010, 01:25 PM
 **  \copyright	Copyright (C) 2008 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -16,7 +16,6 @@
 
 namespace Ninaca\Caches;
 use Ninaca\Exceptions\FtpException;
-use Ninaca\Exceptions\InvalidArgumentException;
 use Ninaca\Uttilities\Ftp;
 use Ninaca\Uttilities\Misc;
 
@@ -59,17 +58,16 @@ class File implements Cache
   ** \param dir
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a dir isn’t a string or is empty.
   ** \throw Ninaca\Exceptions\FtpException
   **     if \a dir is not writable or doens’t exisis.
   */
   public function setRootDir($dir)
   {
-    if (!is_string($dir))
-      throw new InvalidArgumentException(1, 'string', gettype($dir));
-    if ($dir === '')
-      throw new InvalidArgumentException(1, 'nonempty string', 'empty string');
+    Debug::checkArg(0,
+		    1, 'string', $dir,
+		    1, 'nonempty', trim($dir, DIRECTORY_SEPARATOR));
     
     if (!is_dir($dir) || !is_writable($dir))
       throw new FtpException("The directory $dir is not writable.");
@@ -86,7 +84,7 @@ class File implements Cache
   ** \param clear_php_cache
   **          \c bool - Clear php’s internal cache.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a key isn’t a string or is empty (the directory separator is
   **       considered as empty).
   ** \throw Ninaca\Exceptions\CacheException
@@ -97,10 +95,9 @@ class File implements Cache
   public function delete($key,
 			 $clear_php_cache = true)
   {
-    if (!is_string($key))
-      throw new InvalidArgumentException(1, 'string', gettype($key));
-    if (Misc::trim($key) === '' || $key === DIRECTORY_SEPARATOR)
-      throw new InvalidArgumentException(1, 'nonempty string', 'empty string');
+    Debug::checkArg(0,
+		    1, 'string', $key,
+		    1, 'nonempty', trim($key, DIRECTORY_SEPARATOR));
     
     if ($this->__root === '')
       throw new CacheException('You must set a root directory for '.
@@ -115,7 +112,7 @@ class File implements Cache
 	catch (\ErrorException $e) {
 	  throw new FtpException('$key is not removable.');}}
       $key .= '_ttl';}
-    if ( $clear_php_cache )
+    if ($clear_php_cache)
       clearstatcache();
     return $ret;
   }
@@ -127,7 +124,7 @@ class File implements Cache
   ** \param key
   **          \c string - Cache’s name.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a key isn’t a string or is empty (the directory separator is
   **       considered as empty).
   ** \throw Ninaca\Exceptions\CacheException
@@ -139,10 +136,9 @@ class File implements Cache
   */
   public function get($key)
   {
-    if (!is_string($key))
-      throw new InvalidArgumentException(1, 'string', gettype($key));
-    if (Misc::trim($key) === '' || $key === DIRECTORY_SEPARATOR)
-      throw new InvalidArgumentException(1, 'nonempty string', 'empty string');
+    Debug::checkArg(0,
+		    1, 'string', $key,
+		    1, 'nonempty', trim($key, DIRECTORY_SEPARATOR));
     
     if ($this->__root === '')
       throw new CacheException('You must set a root directory for '.
@@ -155,14 +151,14 @@ class File implements Cache
     return $ret === false ? false : unserialize($ret);
   }
   
-
+  
   /*!
   ** Checks if a variable exists in the cache.
   ** 
   ** \param key
   **          \c string
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a key isn’t a string or is empty (the directory separator is
   **       considered as empty).
   ** \throw Ninaca\Exceptions\CacheException
@@ -172,10 +168,9 @@ class File implements Cache
   */
   public function exists($key)
   {
-    if (!is_string($key))
-      throw new InvalidArgumentException(1, 'string', gettype($key));
-    if (Misc::trim($key) === '' || $key === DIRECTORY_SEPARATOR)
-      throw new InvalidArgumentException(1, 'nonempty string', 'empty string');
+    Debug::checkArg(0,
+		    1, 'string', $key,
+		    1, 'nonempty', trim($key, DIRECTORY_SEPARATOR));
     
     if ($this->__root === '')
       throw new CacheException('You must set a root directory for '.
@@ -198,10 +193,10 @@ class File implements Cache
   ** \param [overwrite]
   **          \c bool - Overwrite existing data.
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a key isn’t a string or is empty (the directory separator is
   **       considered as empty).
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a liftime isn’t an int.
   ** \throw Ninaca\Exceptions\CacheException
   **     if no root directory has been defined.
@@ -217,12 +212,10 @@ class File implements Cache
 			$lifetime = 0,
 			$overwrite = true)
   {
-    if (!is_string($key))
-      throw new InvalidArgumentException(1, 'string', gettype($key));
-    if (Misc::trim($key) === '' || $key === DIRECTORY_SEPARATOR)
-      throw new InvalidArgumentException(1, 'nonempty string', 'empty string');
-    if (!is_int($lifetime) && ctype_digit($lifetime))
-      throw new InvalidArgumentException(3, 'int', gettype($lifetime));
+    Debug::checkArg(0,
+		    1, 'string', $key,
+		    1, 'nonempty', trim($key, DIRECTORY_SEPARATOR),
+		    3, 'int', $lifetime);
     
     if ($this->__root === '')
       throw new CacheException('You must set a root directory for '.
@@ -320,11 +313,11 @@ class File implements Cache
   ** \param [suf]
   **          \c string - Use a suffix for file (without extension).
   **
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a dir isn’t a string.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a pre isn’t a string.
-  ** \throw Ninaca\Exceptions\InvalidArgumentException
+  ** \throw Ninaca\Exceptions\InvalidArgumentTypeException
   **     if \a suf isn’t a string.
   ** \throw Ninaca\Exceptions\CacheException
   **     if a deletion fails.
@@ -334,20 +327,18 @@ class File implements Cache
 			$pre = '',
 			$suf = '')
   {
-    if (!is_string($dir))
-      throw new InvalidArgumentException(1, 'string', gettype($dir));
-    if (!is_string($pre))
-      throw new InvalidArgumentException(3, 'string', gettype($pre));
-    if (!is_string($suf))
-      throw new InvalidArgumentException(4, 'string', gettype($suf));
+    Debug::checkArg(0,
+		    1, 'string', $dir,
+		    3, 'string', $pre,
+		    4, 'string', $suf);
     
     if ($this->__root === '')
       throw new CacheException('You must set a root directory for '.
 			       'caching files.');
     $this->clear_exec($dir, $recursive, $pre, $suf);
   }
-
-
+  
+  
   /*!
   ** This method is a part of the clear() method.
   ** 
