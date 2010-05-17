@@ -4,7 +4,7 @@
 **  \file	Debug.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	04/16/2010, 04:31 PM
-**  \last	Nivl <nivl@free.fr> 05/02/2010, 02:14 AM
+**  \last	Nivl <nivl@free.fr> 05/17/2010, 11:36 AM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -15,7 +15,7 @@
 
 
 namespace Ninaca\Utilities;
-use Ninaca\Exceptions\InvalidArgumentException as IAE;
+use Ninaca\Exceptions\InvalidArgumentTypeException as Iate;
 
 /*!
 ** This class contains usefull methods for debuging projects.
@@ -49,13 +49,13 @@ class Debug
 				     $real = false)
   {
     if (!is_int($depth) && !ctype_digit($depth))
-      throw new Iae(1, 'int (greater or equal to 0)', gettype($depth));
+      throw new Iate(1, 'int (greater or equal to 0)', gettype($depth));
     else if ($depth < 0)
-      throw new Iae(1, 'greater or equal to 0', $depth);
+      throw new Iate(1, 'greater or equal to 0', $depth);
     if (!is_int($count) && !ctype_digit($count))
-      throw new Iae(2, 'int (greater or equal to 0)', gettype($count));
+      throw new Iate(2, 'int (greater or equal to 0)', gettype($count));
     else if ($count < 0)
-      throw new Iae(2, 'greater or equal to 0', $count);
+      throw new Iate(2, 'greater or equal to 0', $count);
 
     $depth += $real ? 0 : 3;
     $entry = self::whoCalledMe_getEntry($depth);
@@ -232,11 +232,11 @@ class Debug
       $arg = $args[$i];
       if ($i % 3 === 2) {
 	if (!is_string($arg) && !is_array($arg))
-	  throw new Iae($i, 'string or array', gettype($arg));
+	  throw new Iate($i, 'string or array', gettype($arg));
 	$type = $arg;}
       else if ($i % 3 === 1) {
 	if (!Misc::isInt($arg))
-	  throw new Iae($i, 'int', gettype($arg));
+	  throw new Iate($i, 'int', gettype($arg));
 	$num = $arg;}
       else
 	self::checkArgs_check($num, $type, $arg, $iae);}
@@ -265,21 +265,21 @@ class Debug
     $types = array('int','integer','string','char','nonempty','ressource',
 		   'string or array', 'array or string');
     if (!is_array($type) && !in_array(($type, $types))
-	throw new Iae($i, 'an existing type', $type);
+	throw new Iate($i, 'an existing type', $type);
 
     if (($type === 'int' || $type === 'integer') && !Misc::isInt($arg))
-      throw new Iae($num, 'int', gettype($arg), $iae);
+      throw new Iate($num, 'int', gettype($arg), $iae);
     else if ($type === 'string' && !is_string($arg))
-      throw new Iae($num, 'string', gettype($arg), $iae);
+      throw new Iate($num, 'string', gettype($arg), $iae);
     else if ($type === 'char' && !is_string($arg) && mb_strlen($arg) > 1)
-      throw new Iae($num, 'char', gettype($arg), $iae);
+      throw new Iate($num, 'char', gettype($arg), $iae);
     else if ($type === 'nonempty' && Misc::isEmpty($arg))
-      throw new Iae($num, 'nonempty', 'empty value', $iae);
+      throw new Iate($num, 'nonempty', 'empty value', $iae);
     else if ($type === 'ressource' && !$arg)
-      throw new Iae($num, 'ressource', gettype($arg), $iae);
+      throw new Iate($num, 'ressource', gettype($arg), $iae);
     else if (($type === 'string or array' || $type === 'array or string')
 	     && !is_string($arg) && !is_array($arg))
-      throw new Iae($num, 'string or array', gettype($arg), $iae);
+      throw new Iate($num, 'string or array', gettype($arg), $iae);
     else if (is_array($type) && count($type) == 2 && isset($type[0],$type[1]))
       self::checkArgs_checkArray($num, $type, $arg, $iae);
   }
@@ -309,16 +309,16 @@ class Debug
     $iae += 1;
     $types = array('greater than', 'less than', 'equal to');
     if (!in_array(($type[0], $types))
-	throw new Iae($i, 'an existing type', $type[0], 1);
+	throw new Iate($i, 'an existing type', $type[0], 1);
     
     if ($type[0] === 'greater than' && Misc::isInt($type[1])) {
       if ($arg <= $type[1])
-	throw new Iae($num, "greater than {$type[1]}", $arg, $iae);}
+	throw new Iate($num, "greater than {$type[1]}", $arg, $iae);}
     else if ($type[0] === 'less than' && Misc::isInt($type[1])) {
       if ($arg >= $type[1])
-	throw new Iae($num, "less than {$type[1]}", $arg, $iae);}
+	throw new Iate($num, "less than {$type[1]}", $arg, $iae);}
     else if ($type[0] === 'equal to' && $type[1] != $arg)
-      throw new Iae($num, "equal to {$type[1]}", $arg, $iae);
+      throw new Iate($num, "equal to {$type[1]}", $arg, $iae);
   }
 }
 
