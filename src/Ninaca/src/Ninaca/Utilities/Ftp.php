@@ -4,7 +4,7 @@
 **  \file	Ftp.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	09/13/2009, 06:53 PM
-**  \last	Nivl <nivl@free.fr> 05/18/2010, 04:34 PM
+**  \last	Nivl <nivl@free.fr> 05/18/2010, 04:38 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -77,7 +77,7 @@ class Ftp
 		     8, array('greater than', -1), $depth,
 		     9, 'int', $iate,
 		     9, array('greater than', -1), $iate);
-    Debug::checkArgs($aie,
+    Debug::checkArgs($iate,
 		     1, 'string or array', $path,
 		     1, 'nonempty', $path);
     

@@ -4,7 +4,7 @@
 **  \file	Debug.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	04/16/2010, 04:31 PM
-**  \last	Nivl <nivl@free.fr> 05/18/2010, 03:39 PM
+**  \last	Nivl <nivl@free.fr> 05/18/2010, 04:37 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -258,7 +258,7 @@ class Debug
   **          \c int - Depth for InvalidArgumentTypeException.
   */
   static private function checkArgs_check($num,
-					  array $type,
+					  $type,
 					  $arg,
 					  $iate)
   {
