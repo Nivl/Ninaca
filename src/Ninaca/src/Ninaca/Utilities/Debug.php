@@ -4,7 +4,7 @@
 **  \file	Debug.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	04/16/2010, 04:31 PM
-**  \last	Nivl <nivl@free.fr> 05/17/2010, 12:20 PM
+**  \last	Nivl <nivl@free.fr> 05/18/2010, 03:39 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -16,6 +16,7 @@
 
 namespace Ninaca\Utilities;
 use Ninaca\Exceptions\InvalidArgumentTypeException as Iate;
+
 
 /*!
 ** This class contains usefull methods for debuging projects.
@@ -155,7 +156,7 @@ class Debug
   {
     if (($file_line = mb_strrchr($entry, '/')) === false)
       return array();
-    if (mb_strpos($file_line, 'eval')){
+    if (mb_strpos($file_line, "eval()'d")){
       $pos = mb_strpos($file_line, ')');
       $pos2 = mb_strrpos($file_line, ':') + 1;
       $useless_part = mb_substr($file_line, $pos, $pos2-$pos);
@@ -264,7 +265,7 @@ class Debug
     $iate   += 1;
     $types = array('int','integer','string','char','nonempty','ressource',
 		   'string or array', 'array or string');
-    if (!is_array($type) && !in_array(($type, $types)))
+    if (!is_array($type) && !in_array($type, $types))
 	throw new Iate($i, 'an existing type', $type);
 
     if (($type === 'int' || $type === 'integer') && !Misc::isInt($arg))
@@ -308,7 +309,7 @@ class Debug
   {
     $iate += 1;
     $types = array('greater than', 'less than', 'equal to');
-    if (!in_array(($type[0], $types))
+    if (!in_array($type[0], $types))
 	throw new Iate($i, 'an existing type', $type[0], 1);
     
     if ($type[0] === 'greater than' && Misc::isInt($type[1])) {
