@@ -4,7 +4,7 @@
 **  \file	Ftp.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	09/13/2009, 06:53 PM
-**  \last	Nivl <nivl@free.fr> 05/17/2010, 12:19 PM
+**  \last	Nivl <nivl@free.fr> 05/18/2010, 04:34 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -17,7 +17,7 @@
 namespace Ninaca\Utilities;
 use \Ninaca\Utilities\Misc;
 use \Ninaca\Exceptions\FtpException;
-ise \Ninaca\Exceptions\InvalidArgumentTypeException as Iate;
+use \Ninaca\Exceptions\InvalidArgumentTypeException as Iate;
 
 
 /*!
@@ -63,14 +63,14 @@ class Ftp
   **     if \a path is not a string or is empty.
   */
   static public function getFilesFromDir($path,
-					  array &$list,
-					  array $exts = array(),
-					  array $except = array(),
-					  $rec = true,
-					  \Closure $cb_key = null,
-					  \Closure $cb_value = null
-					  $depth = 0,
-					  $iate = 0)
+					 array &$list,
+					 array $exts = array(),
+					 array $except = array(),
+					 $rec = true,
+					 \Closure $cb_key = null,
+					 \Closure $cb_value = null,
+					 $depth = 0,
+					 $iate = 0)
   {
     Debug::checkArgs(0,
 		     8, 'int', $depth,
