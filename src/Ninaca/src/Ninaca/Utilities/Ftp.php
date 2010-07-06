@@ -4,7 +4,7 @@
 **  \file	Ftp.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	09/13/2009, 06:53 PM
-**  \last	Nivl <nivl@free.fr> 05/18/2010, 04:38 PM
+**  \last	Nivl <nivl@free.fr> 06/02/2010, 05:36 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -638,7 +638,7 @@ class Ftp
 
     if (!preg_match('`^-?[0-9]+\.?[0-9]*[okmgt]?$`i', $size))
       throw new Iate(1, 'a number which can be followed '.
-					 'by a valid char', $size, $iate);
+		        'by a valid char', $size, $iate);
     $to = strtolower($to);
     if (!in_array($to, array('o', 'k', 'm', 'g', 't')))
       throw new Iate(2, 'an existing unit', $to, $iate);

@@ -4,7 +4,7 @@
 **  \file	SyckYaml.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	08/28/2009, 11:32 PM
-**  \last	Nivl <nivl@free.fr> 05/17/2010, 01:37 PM
+**  \last	Nivl <nivl@free.fr> 06/07/2010, 01:53 AM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -17,6 +17,7 @@
 namespace Ninaca\Parsers\Yaml;
 use \Ninaca\Exceptions\FtpException;
 use \Ninaca\Exceptions\ParserException;
+use \Ninaca\utilities\Debug;
 
 
 /*!
@@ -45,17 +46,17 @@ class Syck implements Yaml
   public function store($file,
 			$yaml)
   {
-    Debug::checkArg(0,
-		    1, 'string', $file,
-		    1, 'nonempty', $file,
-		    2, 'nonempty', $yaml);
+    Debug::checkArgs(0,
+		     1, 'string', $file,
+		     1, 'nonempty', $file,
+		     2, 'nonempty', $yaml);
     
     if (is_array($yaml))
       $yaml = syck_dump($yaml);
     try {
       file_put_contents($file, $value, LOCK_EX);}
     catch (\ErrorException $e) {
-      throw new FtpException(mb_substr(,b_strstr($e->getMessage()), ']:'),3);}
+      throw new FtpException(mb_substr(mb_strstr($e->getMessage()), ']:'),3);}
   }
   
   
@@ -86,8 +87,8 @@ class Syck implements Yaml
   */
   public function load($yaml)
   {
-    Debug::checkArg(0,
-		    1, 'string', $yaml);
+    Debug::checkArgs(0,
+		     1, 'string', $yaml);
 
     if (strpos($yaml, "\n") === false && is_file($yaml))
       return $this->loadFile($yaml);
@@ -113,14 +114,14 @@ class Syck implements Yaml
   */
   public function loadFile($file)
   {
-    Debug::checkArg(0,
-		    1, 'string', $file,
-		    1, 'nonempty', $file);
-    
+    Debug::checkArgs(0,
+		     1, 'string', $file,
+		     1, 'nonempty', $file);
+
     if (!is_file($file) || !is_readable($file))
       throw new FtpException("$file is not readable or doesn’t exists.");
     try {
-      return syck_load($file); }
+      return syck_load(file_get_contents($file)); }
     catch (\SyckException $e) {
     throw new ParserException($e->getMessage());}
   }

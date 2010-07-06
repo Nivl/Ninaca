@@ -4,7 +4,7 @@
 **  \file	Exception.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	04/18/2010, 01:13 AM
-**  \last	Nivl <nivl@free.fr> 04/24/2010, 01:24 AM
+**  \last	Nivl <nivl@free.fr> 05/24/2010, 09:35 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -15,6 +15,7 @@
 
 
 namespace Ninaca\Exceptions;
+use \Ninaca\Utilities\Debug;
 
 
 /*!
@@ -41,14 +42,12 @@ Class Exception extends \Exception
 			      $code = 0,
 			      $Previous = NULL)
   {
-    if (!is_string($msg))
-      throw new InvalidArgumentException(1, 'string', gettype($msg));
-    if ($msg === '')
-      throw new InvalidArgumentException(1, 'nonempty string', 'empty string');
-    if (!is_int($search_depth) && !ctype_digit($search_depth))
-      throw new InvalidArgumentException(2, 'int', gettype($search_depth));
-    if (!is_int($code) && !ctype_digit($code))
-      throw new InvalidArgumentException(3, 'int', gettype($code));
+    Debug::checkArgs(0,
+		     1, 'string', $msg,
+		     1, 'nonempty', $msg,
+		     2, 'int', $search_depth,
+		     3, 'int', $code);
+    
     if ($Previous !== NULL && !($Previous instanceof \Exception)) {
       $type = is_object($Previous) ? get_class($Previous) : gettype($Previous);
       throw new InvalidArgumentException(4,'NULL or an instance of \Exception',

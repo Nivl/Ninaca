@@ -4,7 +4,7 @@
 **  \file	InvalidArgumentTypeException.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	04/16/2010, 07:16 PM
-**  \last	Nivl <nivl@free.fr> 05/17/2010, 11:38 AM
+**  \last	Nivl <nivl@free.fr> 05/24/2010, 09:39 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -20,7 +20,7 @@ namespace Ninaca\Exceptions;
 /*!
 ** Exception thrown if an argument does not match with the expected value.
 */
-class InvalidArgumentTypeException extends InvalidArgumentException
+class InvalidArgumentTypeException extends \InvalidArgumentException
 {
   /*!
   ** Constructor

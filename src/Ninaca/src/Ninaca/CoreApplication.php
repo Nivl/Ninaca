@@ -4,7 +4,7 @@
 **  \file	CoreApplication.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	03/30/2010, 10:34 PM
-**  \last	Nivl <nivl@free.fr> 05/17/2010, 01:01 PM
+**  \last	Nivl <nivl@free.fr> 05/18/2010, 04:13 PM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -16,9 +16,6 @@
 
 namespace Ninaca;
 use Ninaca\Configuration as Config;
-use Ninaca\Exceptions\Exception;
-use Ninaca\Exceptions\InvalidArgumentException;
-use Ninaca\Exceptions\RuntimeException;
 
 
 /*!
@@ -29,7 +26,7 @@ abstract class CoreApplication
   protected
     $_env        = '', ///< \c string - Defined the environement (prod, dev, …)
     $_start_time = 0,   ///< \c int - Time where the class has been instancied.
-    $_configs    = array(), ///< \c array - Array of \Ninaca\Config
+    $_configs    = array(), ///< \c array - Array of \Ninaca\Config.
     $_debug      = false;   ///< \c bool if the debug mode should be enabled.
   
   

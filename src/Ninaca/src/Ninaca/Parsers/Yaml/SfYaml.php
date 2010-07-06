@@ -4,7 +4,7 @@
 **  \file	SfYaml.php
 **  \author	Nivl <nivl@free.fr>
 **  \started	03/31/2010, 03:11 PM
-**  \last	Nivl <nivl@free.fr> 05/17/2010, 01:37 PM
+**  \last	Nivl <nivl@free.fr> 06/07/2010, 01:49 AM
 **  \copyright	Copyright (C) 2009 Laplanche Melvin
 **  
 **  Licensed under the MIT license:
@@ -18,6 +18,7 @@ namespace Ninaca\Parsers\Yaml;
 use \Symfony\Components\Yaml\Yaml as ScYaml;
 use \Ninaca\Exceptions\FtpException;
 use \Ninaca\Exceptions\ParserException;
+use \Ninaca\utilities\Debug;
 
 
 /*!
@@ -51,10 +52,10 @@ class SfYaml implements Yaml
   public function store($file,
 			$yaml)
   {
-    Debug::checkArg(0,
-		    1, 'string', $file,
-		    1, 'nonempty', $file,
-		    2, 'string or array', $yaml);
+    Debug::checkArgs(0,
+		     1, 'string', $file,
+		     1, 'nonempty', $file,
+		     2, 'string or array', $yaml);
     
     if (is_array($yaml)) {
       try {
@@ -103,8 +104,8 @@ class SfYaml implements Yaml
   */
   public function load($yaml)
   {
-    Debug::checkArg(0,
-		    1, 'string', $yaml);
+    Debug::checkArgs(0,
+		     1, 'string', $yaml);
     
     if (strpos($yaml, "\n") === false && is_file($yaml))
       return $this->loadFile($yaml);
@@ -134,9 +135,9 @@ class SfYaml implements Yaml
   */
   public function loadFile($file)
   {
-    Debug::checkArg(0,
-		    1, 'string', $file,
-		    1, 'nonempty', $file);
+    Debug::checkArgs(0,
+		     1, 'string', $file,
+		     1, 'nonempty', $file);
 
     if (!is_file($file) || !is_readable($file))
       throw new FtpException("$file is not readable or doesn’t exists.");
